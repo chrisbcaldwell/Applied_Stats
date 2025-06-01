@@ -66,6 +66,6 @@ medians <- data.frame(
 
 p2 <- ggplot(gather(boot_medians), aes(value)) + 
   geom_histogram(bins = 100) +
-  geom_vline(data = medians, aes(xintercept = median)) +
+  geom_vline(data = medians, aes(xintercept = median, color = 'red')) +
   facet_wrap(~key, scales = 'free_x')
 print(p2)
