@@ -30,7 +30,7 @@ R's `boot` package was used; among choices considered it offered ease of use alo
 
 A histogram of the data shows that average (AVG) is left-skewed, runs (R) are right-skewed, and walk percentage (BB.) is not heavily skewed in either direction:
 
-![R histogram of AVG, BB%, R](Rplot.png)
+![R histogram of AVG, BB%, R](Rplot01.png)
 
 Bootstrapped standard errors were estimated using `boot` along with the processing time of the operation.  The data was resampled 5,000 times to get the standard error estimates for the median of each statistic:
 
@@ -77,9 +77,13 @@ Bootstrap Statistics :
     original  bias    std. error
 t1*       19    0.28   0.4482635
 
-[1] "\n\n\nTotal Run Time:"
+[1] "Total Run Time:"
 Time difference of 29.74731 secs
 ```
+
+The medians of each bootstrapped sample are shown below.  The red line indicates the original sample medians for each statistic of interest:
+
+![R histogram of bootstrapped medians of AVG, BB%, R](Rplot02.png)
 
 ## Bootstrapping with Go
 
