@@ -85,7 +85,11 @@ The medians of each bootstrapped sample are shown below.  The red line indicates
 
 ![R histogram of bootstrapped medians of AVG, BB%, R](Rplot02.png)
 
+For AVG and BB.PCT there could be some skew in each set of bootstrapped medians, though the biases for each are essentially nothing compared to the sample median.  Runs was a binary, unsurprisingly for a discrete variable, with most ending up at 19 and a substantial minority at 20.
+
 ## Bootstrapping with Go
+
+
 
 ## References
 
