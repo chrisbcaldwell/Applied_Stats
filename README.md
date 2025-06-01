@@ -4,6 +4,10 @@
 
 This project compares techniques and execution time in bootstrapping a standard error of the median for three selected baseball statistics.
 
+Bootstrapping estimates a statistical parameter from a sample by taking samples of equal size from the original sample, with replacement.  For example, a sample of 1,000 observations will be randomly resampled with 1,000 observations drawn from the original sample.  Because  the sampling is done with replacement, many observations will be represented more than one, and others will not be chosen at all.
+
+From these re-samples, the statistic of interest is calculated.  This is repeated a large number of times, allowing estimation of the variation of the statistic of interest.
+
 ## Running the code
 
 Feel free to clone this project and run the scripts on your own machine!
@@ -26,16 +30,61 @@ R's `boot` package was used; among choices considered it offered ease of use alo
 
 A histogram of the data shows that average (AVG) is left-skewed, runs (R) are right-skewed, and walk percentage (BB.) is not heavily skewed in either direction:
 
+![R histogram of AVG, BB%, R](Rplot.png)
 
+Bootstrapped standard errors were estimated using `boot` along with the processing time of the operation.  The data was resampled 5,000 times to get the standard error estimates for the median of each statistic:
+
+```
+[1] "Statistic: AVG"
+[[1]]
+
+ORDINARY NONPARAMETRIC BOOTSTRAP
+
+
+Call:
+boot(data = baseball[, cols[i]], statistic = med, R = N)
+
+
+Bootstrap Statistics :
+     original       bias     std. error
+t1* 0.2426036 7.173114e-06 0.0003826049
+
+[1] "Statistic: BB."
+[[1]]
+
+ORDINARY NONPARAMETRIC BOOTSTRAP
+
+
+Call:
+boot(data = baseball[, cols[i]], statistic = med, R = N)
+
+
+Bootstrap Statistics :
+      original       bias     std. error
+t1* 0.07265697 6.951163e-06 0.0003210851
+
+[1] "Statistic: R"
+[[1]]
+
+ORDINARY NONPARAMETRIC BOOTSTRAP
+
+
+Call:
+boot(data = baseball[, cols[i]], statistic = med, R = N)
+
+
+Bootstrap Statistics :
+    original  bias    std. error
+t1*       19    0.28   0.4482635
+
+[1] "\n\n\nTotal Run Time:"
+Time difference of 29.74731 secs
+```
+
+## Bootstrapping with Go
 
 ## References
 
-fangraphs leaderboard
-https://www.fangraphs.com/leaders/major-league?pos=all&stats=bat&lg=all&type=c%2C23%2C34%2C12&month=0&ind=1&team=0&rost=0&players=0&startdate=&enddate=&season1=1978&season=2024&sortcol=5&sortdir=default&qual=10&v_cr=202301&pagenum=1
+Canty, Angelo, and B. D. Ripley, 2024.  boot: Bootstrap R (S-Plus) Functions. R package version 1.3-31.  https://cran.r-project.org/web/packages/boot/index.html
 
-boot package
-https://cran.r-project.org/web/packages/boot/index.html
-Angelo Canty, B. D. Ripley (2024). boot: Bootstrap R (S-Plus) Functions. R package version 1.3-31.
-
-
-
+Fangraphs.  _Major Leage Leaderboards - 1978 to 2024 - Batting_.  https://www.fangraphs.com/leaders/major-league?pos=all&stats=bat&lg=all&type=c%2C23%2C34%2C12&month=0&ind=1&team=0&rost=0&players=0&startdate=&enddate=&season1=1978&season=2024&sortcol=5&sortdir=default&qual=10&v_cr=202301&pagenum=1
