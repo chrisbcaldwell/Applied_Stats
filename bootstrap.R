@@ -15,13 +15,17 @@ setwd(dirname(parent.frame(2)$ofile))
 baseball <- read.csv("baseball.csv")
 head(baseball)
 
+# give the walk% column, currently 'BB.', a better name
+names(baseball)[names(baseball) == 'BB.'] <- 'BB.PCT'
+
 # plot the distributions, removing the row identifiers
-ggplot(gather(subset(baseball, select=-c(Season, Name, Team, NameASCII, PlayerId, MLBAMID))), aes(value)) + 
+p1 <- ggplot(gather(subset(baseball, select=-c(Season, Name, Team, NameASCII, PlayerId, MLBAMID))), aes(value)) + 
   geom_histogram(bins = 40) + 
   facet_wrap(~key, scales = 'free_x')
+print(p1)
 
-# bootstapped medians of the selected statistics
-cols <- c('AVG', 'BB.', 'R')
+# bootstrapped medians of the selected statistics
+cols <- c('AVG', 'BB.PCT', 'R')
 N <- 5000 # number of bootstrapping replicates
 
 # median function that can take the bootstrapping indices
@@ -45,5 +49,23 @@ for (i in 1:length(cols)) {
 
 elapsed <- Sys.time() - t0
 
-print("\n\n\nTotal Run Time:")
+print("Total Run Time:")
 print(elapsed)
+
+# plot the bootstrap sampling distributions of the median
+boot_medians <- data.frame(
+  AVG = boots[[1]]$t,
+  BB.PCT = boots[[2]]$t,
+  R = boots[[3]]$t
+)
+
+medians <- data.frame(
+  key = cols,
+  median = c(boots[[1]]$t0, boots[[2]]$t0, boots[[3]]$t0)
+)
+
+p2 <- ggplot(gather(boot_medians), aes(value)) + 
+  geom_histogram(bins = 100) +
+  geom_vline(data = medians, aes(xintercept = median)) +
+  facet_wrap(~key, scales = 'free_x')
+print(p2)
