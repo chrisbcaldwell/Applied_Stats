@@ -26,7 +26,7 @@ R and Go were used to estimate bootstrapped standard errors for the medians of e
 
 ## Bootstrapping with R
 
-R's `boot` package was used; among choices considered it offered ease of use alongside good performance.
+R's `boot` package was used; among choices considered it offered ease of use alongside good performance.  If needed, the packages `boot` and `rlist` can be installed by unhiding the second and/or third lines of code in `bootstrap.R`.
 
 A histogram of the data shows that average (AVG) is left-skewed, runs (R) are right-skewed, and walk percentage (BB.) is not heavily skewed in either direction:
 
@@ -89,10 +89,16 @@ For AVG and BB.PCT there could be some skew in each set of bootstrapped medians,
 
 ## Bootstrapping with Go
 
+The Go program requires the packages `github.com/go-gota/gota/dataframe` and `github.com/Preetam/bootstrap`; to install run the commands `go get github.com/go-gota/gota/dataframe` and `go get github.com/Preetam/bootstrap` from the terminal if running the program from the source code is desired.  _Note: this step is not needed if the program is run from the executable file._
+
 
 
 ## References
 
-Canty, Angelo, and B. D. Ripley, 2024.  boot: Bootstrap R (S-Plus) Functions. R package version 1.3-31.  https://cran.r-project.org/web/packages/boot/index.html
+Canty, Angelo, and B. D. Ripley.  2024.  boot: Bootstrap R (S-Plus) Functions. R package version 1.3-31.  https://cran.r-project.org/web/packages/boot/index.html
 
-Fangraphs.  _Major Leage Leaderboards - 1978 to 2024 - Batting_.  https://www.fangraphs.com/leaders/major-league?pos=all&stats=bat&lg=all&type=c%2C23%2C34%2C12&month=0&ind=1&team=0&rost=0&players=0&startdate=&enddate=&season1=1978&season=2024&sortcol=5&sortdir=default&qual=10&v_cr=202301&pagenum=1
+Fangraphs.  _Major Leage Leaderboards - 1978 to 2024 - Batting_.  Accessed May 22, 2025.  https://www.fangraphs.com/leaders/major-league?pos=all&stats=bat&lg=all&type=c%2C23%2C34%2C12&month=0&ind=1&team=0&rost=0&players=0&startdate=&enddate=&season1=1978&season=2024&sortcol=5&sortdir=default&qual=10&v_cr=202301&pagenum=1
+
+Gerrand, Andrew.  "Error handling and Go," _The Go Blog._ July 12, 2011.  https://go.dev/blog/error-handling-and-go.
+
+Sánchez Brotons, Alejandro.  October 10, 2021.  dataframe package.  Go package version 0.12.0.  https://pkg.go.dev/github.com/go-gota/gota@v0.12.0/dataframe
