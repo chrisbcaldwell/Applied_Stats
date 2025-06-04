@@ -16,7 +16,7 @@ To run the R version, run the file `bootstrap.R` in your preferred method for R 
 
 To run the first Go version there are two options.  Use the terminal to navigate to your local directory and either:
 * use the command `go run bootstrap.go` to run the Go file directly, or
-* use the command  `bootstrap` to run the Go executable file `bootstrap.exe`
+* use the command  `./applied_stats` to run the Go executable file `applied_stats.exe`
 
 For the second Go version that removes reflection, navigate to the subfolder `bootstrap2` in the terminal and follow the instructions above, replacing `bootstrap` with `bootstrap2`.
 
@@ -150,10 +150,30 @@ Bootstrapping run time: 37.7749777s
 Total run time: 37.8568044s
 ```
 
-The main culprit in the reduced performace was likely all the `reflect` calls (Buckley 2024); the most easily implememnted improvement was to simply clone the `bootstrap` package and add my own standard error method:
+The main culprit in the reduced performace was likely all the `reflect` calls (Buckley 2024); the most easily implememnted improvement was to simply clone the `bootstrap` package and add my own standard error method.  This did not improve the speed at all.
+
+The **real** main culprit was the `bootstrap` package's sorting of aggregators in the bootstrapping samples.  This was done to facilitate confidence intervals and producing quantiles on demand.  With a standard error, though, that step is unneeded. THe sorting was moved from the Resample method to the Quantile methods, reducing the load for standard error bootstrapping:
 
 ```
+Variable: AVG
+Median 0.24260355
+Standard Error: 0.0003799596937815174
 
+Variable: BB%
+Median 0.0726569655
+Standard Error: 0.00032019736145058223
+
+Variable: R
+Median 19
+Standard Error: 0.4471073036623247
+
+Bootstrapping run time: 20.3805921s
+Total run time: 20.4333388s
+```
+
+Total processing time went from 37.9 seconds to 20.4 seconds.
+
+Further improvement would likely be possible by running the three bootstrapping iterations concurrently.
 
 ## References
 
