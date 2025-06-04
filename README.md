@@ -95,10 +95,14 @@ The Go program requires the packages `github.com/go-gota/gota/dataframe` and `gi
 
 ## References
 
-Canty, Angelo, and B. D. Ripley.  2024.  boot: Bootstrap R (S-Plus) Functions. R package version 1.3-31.  https://cran.r-project.org/web/packages/boot/index.html
+Canty, Angelo, and B. D. Ripley.  boot: Bootstrap R (S-Plus) Functions. R package version 1.3-31.  2024.  https://cran.r-project.org/web/packages/boot/index.html
 
 Fangraphs.  _Major Leage Leaderboards - 1978 to 2024 - Batting_.  Accessed May 22, 2025.  https://www.fangraphs.com/leaders/major-league?pos=all&stats=bat&lg=all&type=c%2C23%2C34%2C12&month=0&ind=1&team=0&rost=0&players=0&startdate=&enddate=&season1=1978&season=2024&sortcol=5&sortdir=default&qual=10&v_cr=202301&pagenum=1
 
-Gerrand, Andrew.  "Error handling and Go," _The Go Blog._ July 12, 2011.  https://go.dev/blog/error-handling-and-go.
+Gerrand, Andrew.  "Error handling and Go," _The Go Blog._  July 12, 2011.  https://go.dev/blog/error-handling-and-go.
 
-Sánchez Brotons, Alejandro.  October 10, 2021.  dataframe package.  Go package version 0.12.0.  https://pkg.go.dev/github.com/go-gota/gota@v0.12.0/dataframe
+Jinka, Preetam.  "Bootstrap for alerting," _Misframe_ (Blog).  May 7, 2017.  https://misfra.me/2017/05/07/bootstrap-for-alerting/
+
+Jinka, Preetam.  bootstrap package.  Go package version 0.0.0.  November 12, 2017.  https://pkg.go.dev/github.com/go-gota/gota@v0.12.0/dataframe
+
+Sánchez Brotons, Alejandro.  dataframe package.  Go package version 0.12.0.  October 10, 2021.  https://pkg.go.dev/github.com/go-gota/gota@v0.12.0/dataframe
