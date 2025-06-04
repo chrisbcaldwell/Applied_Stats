@@ -91,18 +91,90 @@ For AVG and BB.PCT there could be some skew in each set of bootstrapped medians,
 
 The Go program requires the packages `github.com/go-gota/gota/dataframe` and `github.com/Preetam/bootstrap`; to install run the commands `go get github.com/go-gota/gota/dataframe` and `go get github.com/Preetam/bootstrap` from the terminal if running the program from the source code is desired.  _Note: this step is not needed if the program is run from the executable file._
 
+Because bootstrapping isn't as well supported by Go packages as in R, there were some substantial workarounds required to get a standard error of a bootstrapped sampling distribution of a median.  Primarily, the `github.com/Preetam/bootstrap` package does not support standard errors; it was built as a simple Go package that allows confidence intervals to be derived from bootstrapped quantiles representing the lower and upper intervals of the limit.  Building the standard error from scratch is impossible by normal means because the package does not export the iterated bootstrapped medians:
+
+```
+// BasicResampler is a basic bootstrap resampler.
+type BasicResampler struct {
+	aggregator       Aggregator
+	iterations       int
+	sampleAggregates []float64
+	r                rand.Source
+}
+```
+
+Because none of the field names in the `BasicResampler` type are capitalized, they are not available to the user of the package.  The field `sampleAggregates` contains the statistic of interest for each bootstrapped sample iteration.
+
+A workaround was started based on the blog post by Elsaid detailing using the `reflect` package in the Go standard library to access unexported elements inside an imported element.  There was a crucial problem though: `reflect` as an intentional design philosophy does not allow the user to call functions directly on to the reflected values (with some exceptions like `fmt.Println()` and `refelct.Value.Seq2`), even if the call does not alter the values (Randall 2019).  So, even though access was gained to the values contained in `reflect.BasicResampler.sampleAggregates`, no operations could be performed directly on the data.  Following the advice laid out by Johnson (2024), I tried iterating the underlying values of `sampleAggregates` using `refelct.Value.Seq2`:
+
+```
+func getStdErr(br *bootstrap.BasicResampler) float64 {
+	stdevValue := reflect.ValueOf(stat.StdDev) // turn the st dev function into a reflect.Value type
+	v := reflect.ValueOf(br)
+	m := v.Elem().FieldByName("sampleAggregates")
+	n := m.Len()
+	m2 := make([]float64, n)
+	for i, val := range m.Seq2() {
+		m2[i.Int()] = val.Float()
+	}
+	medians := reflect.ValueOf(m2) // have to trick reflect.Value.Call into taking an unexported field
+	w := make([]float64, n)
+	for i := 0; i < n; i++ {
+		w[i] = 1.0
+	}
+	weights := reflect.ValueOf(w) // stat.StdDev takes a weights argument
+	args := []reflect.Value{medians, weights}
+	results := stdevValue.Call(args)
+	return results[0].Float()
+}
+```
+
+This approach worked in the sense that it produced resonable results, but as one might expect this Rube Goldberg function had considerable computational expense and the Go program took longer than the R script by about 27%:
+
+```
+Variable: AVG
+Median 0.24260355
+Standard Error: 0.0003799596937815174
+
+Variable: BB%
+Median 0.0726569655
+Standard Error: 0.00032019736145058223
+
+Variable: R
+Median 19
+Standard Error: 0.4471073036623247
+
+Bootstrapping run time: 37.7749777s
+Total run time: 37.8568044s
+```
+
+The main culprit in the reduced performace was likely all the `reflect` calls (Buckley 2024); the most easily implememnted improvement was to simply clone the `bootstrap` package and add my own standard error method:
+
+```
 
 
 ## References
 
-Canty, Angelo, and B. D. Ripley.  boot: Bootstrap R (S-Plus) Functions. R package version 1.3-31.  2024.  https://cran.r-project.org/web/packages/boot/index.html
+Buckley, Ersin.  "Reflection is slow in Golang," _Ersin's Blog._  May 25, 2024.  https://www.ersin.nz/articles/reflection-is-slow.
 
-Fangraphs.  _Major Leage Leaderboards - 1978 to 2024 - Batting_.  Accessed May 22, 2025.  https://www.fangraphs.com/leaders/major-league?pos=all&stats=bat&lg=all&type=c%2C23%2C34%2C12&month=0&ind=1&team=0&rost=0&players=0&startdate=&enddate=&season1=1978&season=2024&sortcol=5&sortdir=default&qual=10&v_cr=202301&pagenum=1
+Canty, Angelo, and B. D. Ripley.  boot: Bootstrap R (S-Plus) Functions. R package version 1.3-31.  2024.  https://cran.r-project.org/web/packages/boot/index.html.
+
+Elsaid, Emad.  "Access unexported struct fields in Go," _Emad Elsaid_ (Blog).  April 15, 2023.  https://www.emadelsaid.com/Access%20unexported%20struct%20fields%20in%20Go/.
+
+Fangraphs.  _Major Leage Leaderboards - 1978 to 2024 - Batting_.  Accessed May 22, 2025.  https://www.fangraphs.com/leaders/major-league?pos=all&stats=bat&lg=all&type=c%2C23%2C34%2C12&month=0&ind=1&team=0&rost=0&players=0&startdate=&enddate=&season1=1978&season=2024&sortcol=5&sortdir=default&qual=10&v_cr=202301&pagenum=1.
 
 Gerrand, Andrew.  "Error handling and Go," _The Go Blog._  July 12, 2011.  https://go.dev/blog/error-handling-and-go.
 
-Jinka, Preetam.  "Bootstrap for alerting," _Misframe_ (Blog).  May 7, 2017.  https://misfra.me/2017/05/07/bootstrap-for-alerting/
+Gonum.  stat package.  Go package version 0.16.0.  March 21, 2025.  https://pkg.go.dev/gonum.org/v1/gonum/stat.
 
-Jinka, Preetam.  bootstrap package.  Go package version 0.0.0.  November 12, 2017.  https://pkg.go.dev/github.com/go-gota/gota@v0.12.0/dataframe
+Jinka, Preetam.  "Bootstrap for alerting," _Misframe_ (Blog).  May 7, 2017.  https://misfra.me/2017/05/07/bootstrap-for-alerting/.
 
-Sánchez Brotons, Alejandro.  dataframe package.  Go package version 0.12.0.  October 10, 2021.  https://pkg.go.dev/github.com/go-gota/gota@v0.12.0/dataframe
+Jinka, Preetam.  bootstrap package.  Go package version 0.0.0.  November 12, 2017.  https://pkg.go.dev/github.com/preetam/bootstrap.
+
+Johnson, Carlana.  "What’s New in Go 1.23: Iterators and reflect.Value.Seq," _The Ethically-Trained Programmer_ (Blog).  July 29, 2024.  https://blog.carlana.net/post/2024/golang-reflect-value-seq/.
+
+Randall, Keith (GitHub user randall77).  "As a general rule we don't want to allow reflect to do anything that is not allowed in the language (and vice versa).
+There are exceptions to this rule, but I don't think we want to go any further in that direction."  Comment on GitHub issue.  June 4, 2019.  https://github.com/golang/go/issues/32438.
+
+Sánchez Brotons, Alejandro.  dataframe package.  Go package version 0.12.0.  October 10, 2021.  https://pkg.go.dev/github.com/go-gota/gota@v0.12.0/dataframe.
+
