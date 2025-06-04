@@ -18,7 +18,7 @@ To run the first Go version there are two options.  Use the terminal to navigate
 * use the command `go run bootstrap.go` to run the Go file directly, or
 * use the command  `bootstrap` to run the Go executable file `bootstrap.exe`
 
-* For the second Go version that removes reflection, navigate to the subfolder `bootstrap2` in the terminal and follow the instructions above, replacing `bootstrap` with `bootstrap2`.
+For the second Go version that removes reflection, navigate to the subfolder `bootstrap2` in the terminal and follow the instructions above, replacing `bootstrap` with `bootstrap2`.
 
 ## Project details
 
