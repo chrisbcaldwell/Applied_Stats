@@ -14,9 +14,11 @@ Feel free to clone this project and run the scripts on your own machine!
 
 To run the R version, run the file `bootstrap.R` in your preferred method for R scripts.  RStudio was used for the outputs shown here.
 
-To run the Go version there are two options.  Use the terminal to navigate to your local directory and either:
+To run the first Go version there are two options.  Use the terminal to navigate to your local directory and either:
 * use the command `go run bootstrap.go` to run the Go file directly, or
 * use the command  `bootstrap` to run the Go executable file `bootstrap.exe`
+
+* For the second Go version that removes reflection, navigate to the subfolder `bootstrap2` in the terminal and follow the instructions above, replacing `bootstrap` with `bootstrap2`.
 
 ## Project details
 
